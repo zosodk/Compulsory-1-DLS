@@ -1,0 +1,7 @@
+FROM postgres:15-alpine
+
+ENV POSTGRES_USER=PS
+ENV POSTGRES_PASSWORD=P@ssw0rd
+ENV POSTGRES_DB=EnronDB
+
+COPY init.sql /docker-entrypoint-initdb.d/
