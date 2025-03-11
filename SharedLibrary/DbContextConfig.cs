@@ -1,8 +1,8 @@
 ﻿using SharedLibrary.Models;
-
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 namespace SharedLibrary;
 
-using Microsoft.EntityFrameworkCore;
 
 public class DbContextConfig : DbContext
 {
@@ -10,7 +10,14 @@ public class DbContextConfig : DbContext
     public DbSet<FileEntity> Files { get; set; }
     public DbSet<Occurrence> Occurrences { get; set; }
 
-    public DbContextConfig(DbContextOptions<DbContextConfig> options) : base(options) { }
+    private readonly IConfiguration _configuration;
+
+    public DbContextConfig(DbContextOptions<DbContextConfig> options, IConfiguration configuration)
+        : base(options)
+    {
+        _configuration = configuration;
+    }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
