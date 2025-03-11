@@ -132,3 +132,7 @@ C:\Users\Doina\Compulsory-1-DLS\SearchAPI\obj\Debug\net9.0\refint\SearchAPI.dll
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\obj\Debug\net9.0\SearchAPI.pdb
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\obj\Debug\net9.0\SearchAPI.genruntimeconfig.cache
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\obj\Debug\net9.0\ref\SearchAPI.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Microsoft.AspNetCore.SpaServices.Extensions.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
