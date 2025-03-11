@@ -11,6 +11,11 @@ var connectionString = $"Host={Env.GetString("DB_HOST")};" +
                        $"Password={Env.GetString("DB_PASSWORD")};" +
                        $"Port={Env.GetString("DB_PORT")};" +
                        $"SSL Mode=Require;";
+
+
+Console.WriteLine("🔹 PostgreSQL Connection String: " + connectionString);
+
+
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(connectionString));
 
