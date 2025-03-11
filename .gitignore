@@ -2,3 +2,5 @@ maildir/
 cleaned_mails/
 litmus_maildir/
 litmus_cleaned_mails/
+env
+maildir

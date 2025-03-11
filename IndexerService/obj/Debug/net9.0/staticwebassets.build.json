@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "NIkTVzvpXb5vU6f0orqpCk33bOnQKtWhP9/6Ixr/QKc=",
+  "Source": "IndexerService",
+  "BasePath": "_content/IndexerService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
