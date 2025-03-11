@@ -13,7 +13,7 @@ var connectionString = $"Host={Env.GetString("DB_HOST")};" +
                        $"SSL Mode=Require;";
 
 
-Console.WriteLine("🔹 PostgreSQL Connection String: " + connectionString);
+Console.WriteLine("PostgreSQL Connection String: " + connectionString);
 
 
 builder.Services.AddDbContext<DbContextConfig>(options =>
