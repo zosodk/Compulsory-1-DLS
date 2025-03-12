@@ -11,3 +11,16 @@ C:\Users\Doina\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.dll
 C:\Users\Doina\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\refint\SharedLibrary.dll
 C:\Users\Doina\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.pdb
 C:\Users\Doina\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\ref\SharedLibrary.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\bin\Debug\net9.0\SharedLibrary.deps.json
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\bin\Debug\net9.0\SharedLibrary.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\bin\Debug\net9.0\SharedLibrary.pdb
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.csproj.AssemblyReference.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.AssemblyInfoInputs.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.AssemblyInfo.cs
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.csproj.CoreCompileInputs.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.sourcelink.json
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\refint\SharedLibrary.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\SharedLibrary.pdb
+C:\Users\zosodk\Repos\Compulsory-1-DLS\SharedLibrary\obj\Debug\net9.0\ref\SharedLibrary.dll

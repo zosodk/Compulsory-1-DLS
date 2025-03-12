@@ -1,4 +1,4 @@
-sing Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using DotNetEnv;
 using SharedLibrary;
 

@@ -1,6 +1,55 @@
+# Folders with a lot of files for processing
 maildir/
 cleaned_mails/
 litmus_maildir/
 litmus_cleaned_mails/
-.env
-maildir
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.sln.opendb-*
+*.njsproj.user
+*.pfx
+*.publishsettings
+*.DotSettings.user
+
+# Build results
+[Bb]in/
+[Oo]bj/
+*.apk
+*.ipa
+*.aar
+*.xap
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular build output
+dist/
+
+# Docker
+*.dockerignore
+docker-compose.override.yml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Personal/IDE Specific
+*.idea/
+*.vscode/
+*.swp
+*.bak

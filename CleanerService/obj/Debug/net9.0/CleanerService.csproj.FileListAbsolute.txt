@@ -50,3 +50,14 @@ C:\Users\Doina\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\refint\CleanerSe
 C:\Users\Doina\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.pdb
 C:\Users\Doina\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.genruntimeconfig.cache
 C:\Users\Doina\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\ref\CleanerService.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.csproj.AssemblyReference.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.AssemblyInfoInputs.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.AssemblyInfo.cs
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.csproj.CoreCompileInputs.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.sourcelink.json
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\refint\CleanerService.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.pdb
