@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(),
     ServiceLifetime.Scoped);
-
+builder.Services.AddControllers();
 
 var frontEndRelativePath = "./../web-ui/www/";
 
