@@ -3,7 +3,7 @@ using Microsoft.Net.Http.Headers;
 using SharedLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddControllers();
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(),
     ServiceLifetime.Scoped);
