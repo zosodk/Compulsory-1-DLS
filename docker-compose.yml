@@ -28,23 +28,5 @@ services:
     ports:
       - "9411:9411"
 
-  cleanerservice:
-    build:
-      context: .
-      dockerfile: CleanerService/Dockerfile
-    depends_on:
-      - rabbitmq
-      - seq
-      - zipkin
-      - postgres
-    volumes:
-      - ./litmus_maildir:/app/maildir:ro
-    environment:
-      - Seq__ServerUrl=http://seq:5341
-      - Otlp__Endpoint=http://zipkin:9411/v1/traces
-      - RabbitMQ__HostName=rabbitmq
-      - RabbitMQ__QueueName=cleaned_emails
-      - Database__ConnectionString=Host=postgres;Database=enron_db;Username=enron_user;Password=enron_password
-
 volumes:
   postgres_data:
