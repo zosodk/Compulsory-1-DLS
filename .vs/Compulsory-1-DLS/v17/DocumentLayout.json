@@ -1,7 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C298CD9E-EA01-491D-B631-39210F36DD1F}|CleanerService\\CleanerService.csproj|c:\\users\\zosodk\\repos\\compulsory-1-dls\\cleanerservice\\worker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C298CD9E-EA01-491D-B631-39210F36DD1F}|CleanerService\\CleanerService.csproj|solutionrelative:cleanerservice\\worker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,8 +14,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -18,6 +27,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Worker.cs",
+              "DocumentMoniker": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\CleanerService\\Worker.cs",
+              "RelativeDocumentMoniker": "CleanerService\\Worker.cs",
+              "ToolTip": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\CleanerService\\Worker.cs",
+              "RelativeToolTip": "CleanerService\\Worker.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAowEYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-12T00:16:17.501Z",
+              "EditorCaption": ""
             }
           ]
         }
