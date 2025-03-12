@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CleanerService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0ffc31ad3d554515b6ee46c65e99b8c8898b74ee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+57498434f5c73952e1d387a112174602fdfc6501")]
 [assembly: System.Reflection.AssemblyProductAttribute("CleanerService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CleanerService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
