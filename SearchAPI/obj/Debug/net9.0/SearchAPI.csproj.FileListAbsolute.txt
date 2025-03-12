@@ -136,3 +136,5 @@ C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Microsoft.AspNetCore.
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\DotNetEnv.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Sprache.dll

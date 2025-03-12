@@ -1,9 +1,14 @@
-sing Microsoft.EntityFrameworkCore;
+
 using DotNetEnv;
+using Microsoft.EntityFrameworkCore;
 using SharedLibrary;
 
 var builder = WebApplication.CreateBuilder(args);
-Env.Load();
+
+
+string envPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())!.FullName, ".env");
+Env.Load(envPath);
+
 
 var connectionString = $"Host={Env.GetString("DB_HOST")};" +
                        $"Database={Env.GetString("DB_DATABASE")};" +
