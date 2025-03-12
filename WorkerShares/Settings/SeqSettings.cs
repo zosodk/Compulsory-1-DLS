@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedLibrary.Settings
+namespace WorkerShares.Settings
 {
-    public class OtlpSettings
+    public class SeqSettings
     {
-        public string Endpoint { get; set; }
+        public string ServerUrl { get; set; }
     }
 }

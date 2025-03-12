@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchAPI", "SearchAPI\Sear
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedLibrary", "SharedLibrary\SharedLibrary.csproj", "{A11E0CAD-8560-4644-99AE-63AE8E286769}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerShares", "WorkerShares\WorkerShares.csproj", "{57001437-C44F-440F-9130-6C67BE425769}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A11E0CAD-8560-4644-99AE-63AE8E286769}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A11E0CAD-8560-4644-99AE-63AE8E286769}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A11E0CAD-8560-4644-99AE-63AE8E286769}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57001437-C44F-440F-9130-6C67BE425769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57001437-C44F-440F-9130-6C67BE425769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57001437-C44F-440F-9130-6C67BE425769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57001437-C44F-440F-9130-6C67BE425769}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

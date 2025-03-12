@@ -55,9 +55,4 @@ C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerSe
 C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.AssemblyInfoInputs.cache
 C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.AssemblyInfo.cs
 C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.csproj.CoreCompileInputs.cache
-C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.sourcelink.json
-C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.dll
-C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\refint\CleanerService.dll
-C:\Users\zosodk\Repos\Compulsory-1-DLS\CleanerService\obj\Debug\net9.0\CleanerService.pdb

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedLibrary.Settings
+namespace WorkerShares.Settings
 {
-    public class SeqSettings
+    public class DatabaseSettings
     {
-        public string ServerUrl { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

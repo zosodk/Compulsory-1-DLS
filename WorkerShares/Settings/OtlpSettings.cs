@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharedLibrary.Settings
+namespace WorkerShares.Settings
 {
-    public class DatabaseSettings
+    public class OtlpSettings
     {
-        public string ConnectionString { get; set; }
+        public string Endpoint { get; set; }
     }
 }

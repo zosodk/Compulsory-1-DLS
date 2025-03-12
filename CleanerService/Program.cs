@@ -2,12 +2,15 @@ using CleanerService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Exporter.OpenTelemetryProtocol;
-using OpenTelemetry.Metrics; // Add using for metrics
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
-using SharedLibrary.Settings;
+using WorkerShares.Settings;
+using WorkerShares.Interfaces;
+using RabbitMQ.Client;
 
 var host = Host.CreateDefaultBuilder(args)
     .UseSerilog((context, services, configuration) => configuration
@@ -20,12 +23,12 @@ var host = Host.CreateDefaultBuilder(args)
         services.Configure<OtlpSettings>(hostContext.Configuration.GetSection("Otlp"));
         services.Configure<MaildirSettings>(hostContext.Configuration.GetSection("Maildir"));
 
-        services.AddOpenTelemetry() // Updated to AddOpenTelemetry
+        services.AddOpenTelemetry()
             .ConfigureResource(resourceBuilder =>
             {
                 resourceBuilder.AddService("CleanerService");
             })
-            .WithTracing(tracingBuilder => // Configure tracing
+            .WithTracing(tracingBuilder =>
             {
                 tracingBuilder
                     .AddSource("CleanerService")
@@ -36,10 +39,26 @@ var host = Host.CreateDefaultBuilder(args)
                     })
                     .AddAspNetCoreInstrumentation();
             })
-            .WithMetrics(metricsBuilder => // Configure metrics
+            .WithMetrics(metricsBuilder =>
             {
                 // Add metrics instrumentation if needed
             });
+
+        // Add RabbitMQ interface registrations
+        services.AddSingleton<IConnectionWrapper>(sp =>
+        {
+            var rabbitSettings = sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value;
+            var factory = new ConnectionFactory() { HostName = rabbitSettings.HostName };
+            IConnection connection = (IConnection)factory.CreateConnectionAsync(); // This is correct.
+            return new ConnectionWrapper(connection);
+        });
+
+        services.AddSingleton<IModelWrapper>(sp =>
+        {
+            var connectionWrapper = sp.GetRequiredService<IConnectionWrapper>();
+            var model = connectionWrapper.CreateModel();
+            return new ModelWrapper(model);
+        });
 
         services.AddHostedService<Worker>();
     })

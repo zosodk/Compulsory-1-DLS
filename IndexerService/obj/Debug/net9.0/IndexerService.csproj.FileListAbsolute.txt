@@ -134,3 +134,9 @@ C:\Users\Doina\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\refint\IndexerSe
 C:\Users\Doina\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.pdb
 C:\Users\Doina\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.genruntimeconfig.cache
 C:\Users\Doina\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\ref\IndexerService.dll
+C:\Users\zosodk\Repos\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.csproj.AssemblyReference.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\zosodk\Repos\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.AssemblyInfoInputs.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.AssemblyInfo.cs
+C:\Users\zosodk\Repos\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.csproj.CoreCompileInputs.cache
+C:\Users\zosodk\Repos\Compulsory-1-DLS\IndexerService\obj\Debug\net9.0\IndexerService.sourcelink.json
