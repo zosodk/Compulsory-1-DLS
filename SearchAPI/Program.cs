@@ -30,8 +30,7 @@ var connectionString = $"Host={Env.GetString("DB_HOST")};" +
                        $"Database={Env.GetString("DB_DATABASE")};" +
                        $"Username={Env.GetString("DB_USER")};" +
                        $"Password={Env.GetString("DB_PASSWORD")};" +
-                       $"Port={Env.GetString("DB_PORT")};" +
-                       $"SSL Mode=Require;";
+                       $"Port={Env.GetString("DB_PORT")};" ;
 
 Log.Information(" Using PostgreSQL at {Host}:{Port}, Database: {Database}", 
                 Env.GetString("DB_HOST"), 
