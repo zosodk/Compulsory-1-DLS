@@ -3,6 +3,7 @@ using RabbitMQ.Client.Events;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System.Text;
+using Prometheus;
 
 namespace IndexerService.Services
 {
@@ -11,6 +12,19 @@ namespace IndexerService.Services
         private readonly string _rabbitMqHost;
         private readonly DbContextConfig _dbContext;
         private readonly ILogger<MailIndexer> _logger;
+        
+        private static readonly Counter MessagesReceived = Metrics.CreateCounter(
+            "indexer_rabbitmq_messages_received_total", "Total messages received from RabbitMQ");
+
+        private static readonly Counter MessagesFailed = Metrics.CreateCounter(
+            "indexer_rabbitmq_messages_failed_total", "Total RabbitMQ messages failed to process");
+
+        private static readonly Counter FilesSavedToDB = Metrics.CreateCounter(
+            "indexer_files_saved_total", "Total files successfully saved to PostgreSQL");
+
+        private static readonly Histogram MessageProcessingTime = Metrics.CreateHistogram(
+            "indexer_message_processing_seconds", "Histogram of message processing times");
+
 
         public MailIndexer(IConfiguration configuration, DbContextConfig dbContext, ILogger<MailIndexer> logger)
         {
@@ -22,7 +36,7 @@ namespace IndexerService.Services
             _logger.LogInformation("MailIndexer initialized with PostgreSQL");
         }
 
-        public void StartListening()
+      public void StartListening()
         {
             try
             {
@@ -35,35 +49,48 @@ namespace IndexerService.Services
 
                 consumer.Received += (model, ea) =>
                 {
-                    var body = ea.Body.ToArray();
-                    var message = Encoding.UTF8.GetString(body);
-                    _logger.LogInformation(" Received message: {Message}", message);
-
-                    var parts = message.Split('|');
-                    if (parts.Length == 2)
+                    using (var timer = MessageProcessingTime.NewTimer()) 
                     {
-                        string fileName = parts[0];
-                        string filePath = parts[1];
-
                         try
                         {
-                            string content = File.ReadAllText(filePath);
-                            SaveToDatabase(fileName, filePath, content);
+                            MessagesReceived.Inc();
+                            var body = ea.Body.ToArray();
+                            var message = Encoding.UTF8.GetString(body);
+                            _logger.LogInformation("Received message: {Message}", message);
+
+                            var parts = message.Split('|');
+                            if (parts.Length == 2)
+                            {
+                                string fileName = parts[0];
+                                string filePath = parts[1];
+
+                                if (!File.Exists(filePath))
+                                {
+                                    _logger.LogWarning("skipping non-existent file: {FilePath}", filePath);
+                                    MessagesFailed.Inc();
+                                    return;
+                                }
+
+                                string content = File.ReadAllText(filePath);
+                                SaveToDatabase(fileName, filePath, content);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Received malformed message: {Message}", message);
+                                MessagesFailed.Inc();
+                            }
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex, " Failed to read file: {FilePath}", filePath);
+                            _logger.LogError(ex, "Error processing RabbitMQ message");
+                            MessagesFailed.Inc();
                         }
-                    }
-                    else
-                    {
-                        _logger.LogWarning(" Received malformed message: {Message}", message);
                     }
                 };
 
                 channel.BasicConsume(queue: "cleaned_emails", autoAck: true, consumer: consumer);
                 _logger.LogInformation(" Listening for messages on queue: cleaned_emails");
-                
+
                 while (true) { Thread.Sleep(1000); }
             }
             catch (Exception ex)
@@ -71,6 +98,7 @@ namespace IndexerService.Services
                 _logger.LogError(ex, " Error while connecting to RabbitMQ");
             }
         }
+
 
         private void SaveToDatabase(string fileName, string filePath, string content)
         {
@@ -84,11 +112,13 @@ namespace IndexerService.Services
 
                 _dbContext.Files.Add(fileEntity);
                 _dbContext.SaveChanges();
+                 FilesSavedToDB.Inc();
                 _logger.LogInformation(" Saved file to PostgreSQL: {FileName}", fileName);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to save file {FileName} to database", fileName);
+                MessagesFailed.Inc();
             }
         }
     }

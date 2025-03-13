@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using Prometheus;
 using RabbitMQ.Client;
 
 namespace CleanerService.Services
@@ -11,6 +12,18 @@ namespace CleanerService.Services
         private readonly string _rabbitMqHost;
         private readonly ILogger<MailCleaner> _logger;
 
+        private static readonly Counter FilesProcessed = Metrics.CreateCounter(
+            "cleaner_files_processed_total", "Total number of processed files");
+
+        private static readonly Counter FilesSkipped = Metrics.CreateCounter(
+            "cleaner_files_skipped_total", "Total number of skipped files");
+
+        private static readonly Histogram FileProcessingTime = Metrics.CreateHistogram(
+            "cleaner_file_processing_seconds", "Histogram of file processing times");
+
+        private static readonly Counter RabbitMQMessagesPublished = Metrics.CreateCounter(
+            "cleaner_rabbitmq_messages_total", "Total number of messages sent to RabbitMQ");
+
         public MailCleaner(string inputFolder, string outputFolder, string rabbitMqHost, ILogger<MailCleaner> logger)
         {
             _inputFolder = inputFolder;
@@ -19,7 +32,7 @@ namespace CleanerService.Services
             _logger = logger;
         }
 
-        public void ProcessFiles()
+         public void ProcessFiles()
         {
             if (!Directory.Exists(_outputFolder))
                 Directory.CreateDirectory(_outputFolder);
@@ -29,43 +42,50 @@ namespace CleanerService.Services
 
             foreach (var filePath in files)
             {
-                if (Directory.Exists(filePath))
+                
+                using (var timer = FileProcessingTime.NewTimer())
                 {
-                    _logger.LogWarning(" Skipping directory: {FilePath}", filePath);
-                    continue;
-                }
-
-                if (new FileInfo(filePath).Length == 0)
-                {
-                    _logger.LogWarning(" Skipping empty file: {FilePath}", filePath);
-                    continue;
-                }
-
-                _logger.LogInformation(" Processing file: {FilePath}", filePath);
-                try
-                {
-                    string cleanedContent = CleanMail(File.ReadAllText(filePath));
-
-                    if (!string.IsNullOrEmpty(cleanedContent))
+                    try
                     {
-                        string relativePath = Path.GetRelativePath(_inputFolder, filePath);
-                        string outputFile = Path.Combine(_outputFolder, relativePath + ".txt");
-                        
-                        Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
+                        if (Directory.Exists(filePath))
+                        {
+                            _logger.LogWarning("Skipping directory: {FilePath}", filePath);
+                            FilesSkipped.Inc(); 
+                            continue;
+                        }
 
-                        File.WriteAllText(outputFile, cleanedContent);
-                        _logger.LogInformation("Cleaned file saved: {OutputFile}", outputFile);
-                        
-                        PublishToQueue(Path.GetFileName(outputFile), outputFile);
+                        if (new FileInfo(filePath).Length == 0)
+                        {
+                            _logger.LogWarning("Sipping empty file: {FilePath}", filePath);
+                            FilesSkipped.Inc();
+                            continue;
+                        }
+
+                        _logger.LogInformation("Processing file: {FilePath}", filePath);
+
+                        string cleanedContent = CleanMail(File.ReadAllText(filePath));
+
+                        if (!string.IsNullOrEmpty(cleanedContent))
+                        {
+                            string relativePath = Path.GetRelativePath(_inputFolder, filePath);
+                            string outputFile = Path.Combine(_outputFolder, relativePath + ".txt");
+                            
+                            Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
+                            File.WriteAllText(outputFile, cleanedContent);
+                            
+                            _logger.LogInformation(" Cleaned file saved: {OutputFile}", outputFile);
+                            FilesProcessed.Inc(); 
+
+                            PublishToQueue(Path.GetFileName(outputFile), outputFile);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error processing file {FilePath}", filePath);
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, " Error processing file {FilePath}", filePath);
+                    }
                 }
             }
         }
-
         private string CleanMail(string content)
         {
             string headerRegex = @"^(Message-ID:|Mime-Version:|Content-Type:|Content-Transfer-Encoding:|X-.*?:|From:|To:|Cc:|Bcc:|Subject:|Date:|Received:|Forwarded by|[-]+ Forwarded by).*?\n";
@@ -89,6 +109,7 @@ namespace CleanerService.Services
 
                 channel.BasicPublish(exchange: "", routingKey: "cleaned_emails", basicProperties: null, body: body);
                 _logger.LogInformation(" Sent to RabbitMQ: {Message}", message);
+                RabbitMQMessagesPublished.Inc();
             }
             catch (Exception ex)
             {

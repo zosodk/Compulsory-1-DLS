@@ -6,6 +6,7 @@ using SharedLibrary;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using Prometheus;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -109,6 +110,8 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 app.UseRouting();
+app.UseHttpMetrics();
+app.MapMetrics();
 
 //  Log application startup
 Log.Information(" {ServiceName} is now running...", app.Environment.ApplicationName);

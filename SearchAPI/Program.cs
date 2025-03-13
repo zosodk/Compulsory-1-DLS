@@ -6,6 +6,7 @@ using SharedLibrary;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using Prometheus;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -162,7 +163,9 @@ Log.Information(" SPA frontend configured!");
 
 //  Enable API controllers
 app.UseRouting();
+app.UseHttpMetrics(); 
 app.MapControllers();
+app.MapMetrics();
 
 //  Log application startup
 Log.Information(" {ServiceName} is now running...", app.Environment.ApplicationName);
