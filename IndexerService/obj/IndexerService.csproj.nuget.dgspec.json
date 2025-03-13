@@ -108,6 +108,10 @@
             "Serilog.Sinks.Seq": {
               "target": "Package",
               "version": "[9.0.0, )"
+            },
+            "prometheus-net.AspNetCore": {
+              "target": "Package",
+              "version": "[8.2.1, )"
             }
           },
           "imports": [

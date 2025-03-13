@@ -3,6 +3,7 @@ using DotNetEnv;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
+using Prometheus;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,7 +84,10 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 app.UseRouting();
+app.UseHttpMetrics();
 app.MapControllers();
+app.MapMetrics();
+
 
 
 //  Execute `ProcessFiles()`
