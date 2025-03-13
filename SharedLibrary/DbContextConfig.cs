@@ -9,13 +9,12 @@ public class DbContextConfig : DbContext
     public DbSet<Word> Words { get; set; }
     public DbSet<FileEntity> Files { get; set; }
     public DbSet<Occurrence> Occurrences { get; set; }
+    
 
-    private readonly IConfiguration _configuration;
-
-    public DbContextConfig(DbContextOptions<DbContextConfig> options, IConfiguration configuration)
+    public DbContextConfig(DbContextOptions<DbContextConfig> options)
         : base(options)
     {
-        _configuration = configuration;
+        
     }
     
 

@@ -49,6 +49,12 @@ string basePath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName
 string inputFolder = Path.Combine(basePath, "maildir");  
 string outputFolder = Path.Combine(basePath, "cleaned_mails"); 
 
+if (!Directory.Exists(outputFolder))
+{
+    Directory.CreateDirectory(outputFolder);
+    Log.Information("Created output folder: {outputFolder}", outputFolder);
+}
+
 
 //  Ensure cleaned_mails folder exists
 if (!Directory.Exists(outputFolder))
@@ -62,21 +68,12 @@ string rabbitMqHost = Env.GetString("RABBITMQ_HOST", "localhost");
 Log.Information(" Using RabbitMQ host: {rabbitMqHost}", rabbitMqHost);
 
 
-//  Initialize Cleaner Service and Process Files
-try
+// Register MailCleaner as a service 
+builder.Services.AddSingleton<MailCleaner>(provider =>
 {
-    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<MailCleaner>>();
-    var cleaner = new MailCleaner(inputFolder, outputFolder, rabbitMqHost, logger);
-
-    Log.Information("Processing files from {inputFolder}", inputFolder);
-    cleaner.ProcessFiles();
-    
-    Log.Information(" CleanerService finished processing.");
-}
-catch (Exception ex)
-{
-    Log.Error(" Error processing files: {Message}", ex.Message);
-}
+    var logger = provider.GetRequiredService<ILogger<MailCleaner>>();
+    return new MailCleaner(inputFolder, outputFolder, rabbitMqHost, logger);
+});
 
 //  Add controllers
 builder.Services.AddControllers();
@@ -87,6 +84,31 @@ builder.Host.UseSerilog();
 var app = builder.Build();
 app.UseRouting();
 app.MapControllers();
+
+
+//  Execute `ProcessFiles()`
+using (var scope = app.Services.CreateScope())
+{
+    var cleaner = scope.ServiceProvider.GetRequiredService<MailCleaner>();
+    try
+    {
+        Log.Information("Processing files from {inputFolder}", inputFolder);
+        
+        if (!Directory.Exists(inputFolder) || Directory.GetFiles(inputFolder, "*", SearchOption.AllDirectories).Length == 0)
+        {
+            Log.Warning(" No files found in {inputFolder}. Check if maildir is correctly populated.", inputFolder);
+        }
+        else
+        {
+            cleaner.ProcessFiles();
+            Log.Information(" CleanerService finished processing.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Log.Error("Error processing files: {Message}", ex.Message);
+    }
+}
 
 //  Log application startup
 Log.Information(" {ServiceName} is now running...", app.Environment.ApplicationName);

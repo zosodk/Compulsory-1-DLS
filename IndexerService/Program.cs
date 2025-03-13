@@ -26,23 +26,52 @@ Env.Load(envPath);
 Log.Information(" .env loaded successfully!");
 
 //  Build PostgreSQL connection string
-var connectionString = $"Host={Env.GetString("DB_HOST")};" +
-                       $"Database={Env.GetString("DB_DATABASE")};" +
-                       $"Username={Env.GetString("DB_USER")};" +
-                       $"Password={Env.GetString("DB_PASSWORD")};" +
-                       $"Port={Env.GetString("DB_PORT")};" +
-                       $"SSL Mode=Require;";
+var mainDbConnectionString = $"Host={Env.GetString("DB_HOST")};" +
+                             $"Database={Env.GetString("DB_DATABASE")};" +
+                             $"Username={Env.GetString("DB_USER")};" +
+                             $"Password={Env.GetString("DB_PASSWORD")};" +
+                             $"Port={Env.GetString("DB_PORT")};" +
+                             $"SSL Mode=Require;";
+
+string shard1DbConnectionString = $"Host={Env.GetString("DB_SHARD1_HOST")};" +
+                                  $"Database={Env.GetString("DB_SHARD1_NAME")};" +
+                                  $"Username={Env.GetString("DB_SHARD1_USER")};" +
+                                  $"Password={Env.GetString("DB_SHARD1_PASSWORD")};" +
+                                  $"Port={Env.GetString("DB_SHARD1_PORT")};" +
+                                  $"SSL Mode=Require;";
+
+string shard2DbConnectionString = $"Host={Env.GetString("DB_SHARD2_HOST")};" +
+                                  $"Database={Env.GetString("DB_SHARD2_NAME")};" +
+                                  $"Username={Env.GetString("DB_SHARD2_USER")};" +
+                                  $"Password={Env.GetString("DB_SHARD2_PASSWORD")};" +
+                                  $"Port={Env.GetString("DB_SHARD2_PORT")};" +
+                                  $"SSL Mode=Require;";
 
 Log.Information(" Using PostgreSQL at {Host}:{Port}, Database: {Database}", 
                 Env.GetString("DB_HOST"), 
                 Env.GetString("DB_PORT"), 
                 Env.GetString("DB_DATABASE"));
 
-//  Register database connection
+// Register main database and shards
 builder.Services.AddDbContext<DbContextConfig>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(mainDbConnectionString));
 
-Log.Information(" Database connection configured successfully!");
+builder.Services.AddSingleton(provider => 
+    new ShardedDbContext(new List<string>
+{
+    shard1DbConnectionString,
+    shard2DbConnectionString
+}));
+
+Log.Information(" Database connections configured successfully!");
+
+// Run migrations
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DbContextConfig>();
+    db.Database.Migrate();
+}
+
 
 //  Configure OpenTelemetry
 builder.Services.AddOpenTelemetry()
