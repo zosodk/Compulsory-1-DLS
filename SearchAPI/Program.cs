@@ -41,6 +41,12 @@ Log.Information(" Using PostgreSQL at {Host}:{Port}, Database: {Database}",
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(connectionString));
 
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DbContextConfig>();
+    db.Database.Migrate();
+}
+
 Log.Information(" Database connection configured successfully!");
 
 //  Configure OpenTelemetry
@@ -103,6 +109,9 @@ Log.Information(" SPA Static Files set to {Path}", frontEndRelativePath);
 
 // Configure Serilog for application
 builder.Host.UseSerilog();
+
+// Configure the application to listen on http://localhost:5000
+builder.WebHost.UseUrls("http://localhost:5000");
 
 var app = builder.Build();
 

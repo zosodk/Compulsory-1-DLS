@@ -5,22 +5,25 @@ namespace IndexerService.Shards;
 
 public class ShardedDbContext
 {
-    private readonly IConfiguration _configuration;
+    private readonly Dictionary<string, string> _shardConnections;
 
-    public ShardedDbContext(IConfiguration configuration)
+    public ShardedDbContext(List<string> shardConnections)
     {
-        _configuration = configuration;
+        _shardConnections = new Dictionary<string, string>
+        {
+            { "shard1", shardConnections[0] },
+            { "shard2", shardConnections[1] }
+        };
     }
 
     public DbContextConfig GetShardContext(string user)
     {
-        string connectionString = user.StartsWith("A-M") ? 
-            "Host=postgres_shard_1;Database=shard1db;" :
-            "Host=postgres_shard_2;Database=shard2db;";
+        // Decide which shard to use
+        string connectionString = user.StartsWith("A-M") ? _shardConnections["shard1"] : _shardConnections["shard2"];
 
         var optionsBuilder = new DbContextOptionsBuilder<DbContextConfig>();
         optionsBuilder.UseNpgsql(connectionString);
 
-        return new DbContextConfig(optionsBuilder.Options, _configuration);
+        return new DbContextConfig(optionsBuilder.Options);
     }
 }

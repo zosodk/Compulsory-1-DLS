@@ -36,7 +36,7 @@ export class SearchComponent {
   searchEmails() {
     if (!this.query) return;
 
-    this.http.get<any>(`http://localhost/search?query=${this.query}`).subscribe({
+    this.http.get<any>(`http://localhost:5000/api/search/query?query=${this.query}`).subscribe({
       next: (response) => {
         this.emails = response.results;
       },

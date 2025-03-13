@@ -1,7 +1,6 @@
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -10,11 +9,7 @@ services:
       test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 10s
       retries: 5
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
-
+  
   postgres:
     image: postgres:latest
     container_name: postgres_db
@@ -27,12 +22,9 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "avnadmin" ]
+      test: [ "CMD-SHELL", "pg_isready -U avnadmin" ]
       interval: 10s
       retries: 5
 
@@ -47,15 +39,9 @@ services:
         condition: service_healthy
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://zipkin:9411/api/v2/spans
-      - SERILOG__WRITETO__SEQ__SERVERURL=http://seq:5341
     restart: unless-stopped
     ports:
-      - "8081:8080"
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
+      - "8087:8080"
 
   indexer_service:
     build:
@@ -71,19 +57,10 @@ services:
     environment:
       - RABBITMQ_HOST=rabbitmq
       - POSTGRES_HOST=postgres
-      - POSTGRES_DATABASE=defaultdb
-      - POSTGRES_USER=avnadmin
-      - POSTGRES_PASSWORD=AVNS_wV3mour-_TLqRKYrbRb
       - POSTGRES_PORT=5432
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://zipkin:9411/api/v2/spans
-      - SERILOG__WRITETO__SEQ__SERVERURL=http://seq:5341
     restart: unless-stopped
     ports:
-      - "8082:8080"
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
+      - "8088:8080"
 
   search_api:
     build:
@@ -96,19 +73,12 @@ services:
         condition: service_healthy
     environment:
       - POSTGRES_HOST=postgres
-      - POSTGRES_DATABASE=defaultdb
-      - POSTGRES_USER=avnadmin
-      - POSTGRES_PASSWORD=AVNS_wV3mour-_TLqRKYrbRb
       - POSTGRES_PORT=5432
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://zipkin:9411/api/v2/spans
-      - SERILOG__WRITETO__SEQ__SERVERURL=http://seq:5341
     restart: unless-stopped
     ports:
-      - "8090:8080"
-    logging:
-      driver: "local"
-      options:
-        max-size: "10m"
+      - "8095:8080"
+      - "8096:8081"
+      - "8097:8082"
 
   seq:
     image: datalust/seq:latest
@@ -156,11 +126,12 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_shard1_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "avnadmin" ]
+      test: [ "CMD-SHELL", "pg_isready -U avnadmin" ]
       interval: 10s
       retries: 5
-
+  
   postgres_shard_2:
     image: postgres:latest
     container_name: postgres_shard_2
@@ -173,8 +144,9 @@ services:
     restart: unless-stopped
     volumes:
       - postgres_shard2_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "avnadmin" ]
+      test: [ "CMD-SHELL", "pg_isready -U avnadmin" ]
       interval: 10s
       retries: 5
 
@@ -202,40 +174,3 @@ volumes:
 
 
 
-
-
-#version: "3.8"
-#services:
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
-#    ports:
-#      - "9200:9200"
-#    environment:
-#      - discovery.type=single-node
-#      - "ES_JAVA_OPTS=-Xms4096m -Xmx4096m"
-#      - xpack.security.enabled=false #disable security
-#    volumes:
-#      - esdata:/usr/share/elasticsearch/data
-#
-#  kibana:
-#    image: docker.elastic.co/kibana/kibana:8.17.1
-#    ports:
-#      - "5601:5601"
-#    environment:
-#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-#      - xpack.security.enabled=false #disable security
-#    depends_on:
-#      - elasticsearch
-#
-#  cleaner_indexer:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.cleaner_indexer
-#    depends_on:
-#      - elasticsearch
-#    volumes:
-#      - ./litmus_maildir:/app/litmus_maildir:ro
-#      - ./litmus_cleaned_mails:/app/litmus_cleaned_mails
-#
-#volumes:
-#  esdata:
