@@ -47,8 +47,8 @@ Log.Information(" .env loaded successfully!");
 
 //  Get paths for mail processing
 string basePath = Directory.GetParent(Directory.GetCurrentDirectory())!.FullName;
-string inputFolder = Path.Combine(basePath, "maildir");  
-string outputFolder = Path.Combine(basePath, "cleaned_mails"); 
+string inputFolder = "/app/maildir";  
+string outputFolder = "/app/cleaned_mails"; 
 
 if (!Directory.Exists(outputFolder))
 {
@@ -104,7 +104,7 @@ using (var scope = app.Services.CreateScope())
         }
         else
         {
-            cleaner.ProcessFiles();
+            cleaner.ProcessFilesAsync();
             Log.Information(" CleanerService finished processing.");
         }
     }

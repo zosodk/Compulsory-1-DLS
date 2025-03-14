@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "guest",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "cleaned_emails_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "cleaned_emails",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "cleaned_emails_exchange",
+      "vhost": "/",
+      "destination": "cleaned_emails",
+      "destination_type": "queue",
+      "routing_key": "cleaned_emails",
+      "arguments": {}
+    }
+  ]
+}
