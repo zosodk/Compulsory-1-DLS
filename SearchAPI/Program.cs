@@ -26,11 +26,11 @@ Env.Load(envPath);
 Log.Information(" .env loaded successfully!");
 
 //  Build PostgreSQL connection string
-var connectionString = $"Host={Env.GetString("DB_HOST")};" +
+var connectionString = $"Host={Env.GetString("DB_HOST")}" +
                        $"Database={Env.GetString("DB_DATABASE")};" +
-                       $"Username={Env.GetString("DB_USER")};" +
+                       $"Username={Env.GetString("DB_USER")}" +
                        $"Password={Env.GetString("DB_PASSWORD")};" +
-                       $"Port={Env.GetString("DB_PORT")};" ;
+                       $"Port={Env.GetString("DB_PORT")}" ;
 
 Log.Information(" Using PostgreSQL at {Host}:{Port}, Database: {Database}", 
                 Env.GetString("DB_HOST"), 
