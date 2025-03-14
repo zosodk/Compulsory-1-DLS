@@ -32,7 +32,62 @@ namespace CleanerService.Services
             _logger = logger;
         }
 
-         public void ProcessFiles()
+        public async Task ProcessFilesAsync()
+        {
+            if (!Directory.Exists(_outputFolder))
+            {
+                Directory.CreateDirectory(_outputFolder);
+            }
+
+            string[] files = Directory.GetFiles(_inputFolder, "*", SearchOption.AllDirectories);
+            _logger.LogInformation("Found {FileCount} files in {InputFolder}", files.Length, _inputFolder);
+
+            foreach (var filePath in files)
+            {
+                using (var timer = FileProcessingTime.NewTimer())
+                {
+                    try
+                    {
+                        if (Directory.Exists(filePath))
+                        {
+                            _logger.LogWarning("Skipping directory: {FilePath}", filePath);
+                            FilesSkipped.Inc();
+                            continue;
+                        }
+
+                        if (new FileInfo(filePath).Length == 0)
+                        {
+                            _logger.LogWarning("Skipping empty file: {FilePath}", filePath);
+                            FilesSkipped.Inc();
+                            continue;
+                        }
+
+                        _logger.LogInformation("Processing file: {FilePath}", filePath);
+
+                        string content = await File.ReadAllTextAsync(filePath);
+                        string cleanedContent = CleanMail(content);
+
+                        if (!string.IsNullOrEmpty(cleanedContent))
+                        {
+                            string relativePath = Path.GetRelativePath(_inputFolder, filePath);
+                            string outputFile = Path.Combine(_outputFolder, relativePath + ".txt");
+
+                            Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
+                            await File.WriteAllTextAsync(outputFile, cleanedContent);
+
+                            _logger.LogInformation("Cleaned file saved: {OutputFile}", outputFile);
+                            FilesProcessed.Inc();
+
+                            PublishToQueue(Path.GetFileName(outputFile), outputFile);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error processing file {FilePath}", filePath);
+                    }
+                }
+            }
+        }
         {
             if (!Directory.Exists(_outputFolder))
                 Directory.CreateDirectory(_outputFolder);
