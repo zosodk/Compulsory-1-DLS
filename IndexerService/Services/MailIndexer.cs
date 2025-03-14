@@ -28,7 +28,7 @@ namespace IndexerService.Services
 
         public MailIndexer(IConfiguration configuration, DbContextConfig dbContext, ILogger<MailIndexer> logger)
         {
-            _rabbitMqHost = configuration.GetValue<string>("RABBITMQ_HOST", "localhost"); 
+            _rabbitMqHost = configuration.GetValue<string>("RABBITMQ_HOST", "rabbitmq"); 
             _dbContext = dbContext;
             _logger = logger;
 

@@ -1,10 +1,14 @@
+networks:
+  compulsory-network:
+    driver: bridge
 services:
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: compulsory
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_PORT: ${DB_PORT}
     ports:
       - "5432:5432"
     volumes:
@@ -19,9 +23,10 @@ services:
   postgres_shard_1:
     image: postgres:17
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: compulsory_shard1
+      POSTGRES_USER: ${DB_SHARD1_USER}
+      POSTGRES_PASSWORD: ${DB_SHARD1_PASSWORD}
+      POSTGRES_DB: ${DB_SHARD1_DATABASE}
+      POSTGRES_PORT: ${DB_SHARD1_PORT}
     ports:
       - "5435:5432"
     volumes:
@@ -32,13 +37,15 @@ services:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       retries: 5
+    restart: unless-stopped
   
   postgres_shard_2:
     image: postgres:17
     environment:
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: compulsory_shard2
+      POSTGRES_USER: ${DB_SHARD2_USER}
+      POSTGRES_PASSWORD: ${DB_SHARD2_PASSWORD}
+      POSTGRES_DB: ${DB_SHARD2_DATABASE}
+      POSTGRES_PORT: ${DB_SHARD2_PORT}
     ports:
       - "5436:5432"
     volumes:
@@ -49,12 +56,15 @@ services:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       retries: 5
+    restart: unless-stopped
   
   rabbitmq:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
       - "15672:15672"
+    volumes:
+        - ./definitions.json:/etc/rabbitmq/definitions.json
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
@@ -215,10 +225,6 @@ volumes:
     driver: local
   postgres_shard2_data:
     driver: local
-
-networks:
-  compulsory-network:
-    driver: bridge
 
 
 
