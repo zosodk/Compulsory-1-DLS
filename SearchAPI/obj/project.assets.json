@@ -9297,23 +9297,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\zosodk\\.nuget\\packages\\": {},
+    "C:\\Users\\zosod\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\SearchAPI\\SearchAPI.csproj",
+      "projectUniqueName": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SearchAPI\\SearchAPI.csproj",
       "projectName": "SearchAPI",
-      "projectPath": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\SearchAPI\\SearchAPI.csproj",
-      "packagesPath": "C:\\Users\\zosodk\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\SearchAPI\\obj\\",
+      "projectPath": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SearchAPI\\SearchAPI.csproj",
+      "packagesPath": "C:\\Users\\zosod\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SearchAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\zosodk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\zosod\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -9329,8 +9329,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj": {
-              "projectPath": "C:\\Users\\zosodk\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj"
+            "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj": {
+              "projectPath": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj"
             }
           }
         }
@@ -9437,7 +9437,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IndexerService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+73f90114021d3d317f1afb43dd14830284b28599")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+38b4357ae7e860e3196c4e84a346012ba60a060d")]
 [assembly: System.Reflection.AssemblyProductAttribute("IndexerService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IndexerService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
