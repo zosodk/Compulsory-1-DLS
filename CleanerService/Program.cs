@@ -104,7 +104,7 @@ using (var scope = app.Services.CreateScope())
         }
         else
         {
-            cleaner.ProcessFiles();
+            cleaner.ProcessFilesAsync();
             Log.Information(" CleanerService finished processing.");
         }
     }

@@ -88,59 +88,6 @@ namespace CleanerService.Services
                 }
             }
         }
-        {
-            if (!Directory.Exists(_outputFolder))
-                Directory.CreateDirectory(_outputFolder);
-            
-            string[] files = Directory.GetFiles(_inputFolder, "*", SearchOption.AllDirectories);
-            _logger.LogInformation(" Found {FileCount} files in {InputFolder}", files.Length, _inputFolder);
-
-            foreach (var filePath in files)
-            {
-                
-                using (var timer = FileProcessingTime.NewTimer())
-                {
-                    try
-                    {
-                        if (Directory.Exists(filePath))
-                        {
-                            _logger.LogWarning("Skipping directory: {FilePath}", filePath);
-                            FilesSkipped.Inc(); 
-                            continue;
-                        }
-
-                        if (new FileInfo(filePath).Length == 0)
-                        {
-                            _logger.LogWarning("Sipping empty file: {FilePath}", filePath);
-                            FilesSkipped.Inc();
-                            continue;
-                        }
-
-                        _logger.LogInformation("Processing file: {FilePath}", filePath);
-
-                        string cleanedContent = CleanMail(File.ReadAllText(filePath));
-
-                        if (!string.IsNullOrEmpty(cleanedContent))
-                        {
-                            string relativePath = Path.GetRelativePath(_inputFolder, filePath);
-                            string outputFile = Path.Combine(_outputFolder, relativePath + ".txt");
-                            
-                            Directory.CreateDirectory(Path.GetDirectoryName(outputFile)!);
-                            File.WriteAllText(outputFile, cleanedContent);
-                            
-                            _logger.LogInformation(" Cleaned file saved: {OutputFile}", outputFile);
-                            FilesProcessed.Inc(); 
-
-                            PublishToQueue(Path.GetFileName(outputFile), outputFile);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, " Error processing file {FilePath}", filePath);
-                    }
-                }
-            }
-        }
         private string CleanMail(string content)
         {
             string headerRegex = @"^(Message-ID:|Mime-Version:|Content-Type:|Content-Transfer-Encoding:|X-.*?:|From:|To:|Cc:|Bcc:|Subject:|Date:|Received:|Forwarded by|[-]+ Forwarded by).*?\n";
