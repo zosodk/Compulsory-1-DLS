@@ -3,7 +3,6 @@ using DotNetEnv;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
-using Prometheus;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,14 +55,6 @@ if (!Directory.Exists(outputFolder))
     Log.Information("Created output folder: {outputFolder}", outputFolder);
 }
 
-
-//  Ensure cleaned_mails folder exists
-if (!Directory.Exists(outputFolder))
-{
-    Directory.CreateDirectory(outputFolder);
-    Log.Information(" Created output folder: {outputFolder}", outputFolder);
-}
-
 //  Get RabbitMQ host
 string rabbitMqHost = Env.GetString("RABBITMQ_HOST", "localhost");
 Log.Information(" Using RabbitMQ host: {rabbitMqHost}", rabbitMqHost);
@@ -84,10 +75,7 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 app.UseRouting();
-app.UseHttpMetrics();
 app.MapControllers();
-app.MapMetrics();
-
 
 
 //  Execute `ProcessFiles()`
@@ -113,6 +101,7 @@ using (var scope = app.Services.CreateScope())
         Log.Error("Error processing files: {Message}", ex.Message);
     }
 }
+
 
 //  Log application startup
 Log.Information(" {ServiceName} is now running...", app.Environment.ApplicationName);

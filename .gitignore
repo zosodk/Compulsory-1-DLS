@@ -1,4 +1,5 @@
 # Folders with a lot of files for processing
+env
 maildir/
 cleaned_mails/
 litmus_maildir/

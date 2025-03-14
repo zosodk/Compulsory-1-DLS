@@ -69,3 +69,5 @@ C:\Users\Doina\Compulsory-1-DLS\CleanerService\bin\Debug\net9.0\Serilog.Settings
 C:\Users\Doina\Compulsory-1-DLS\CleanerService\bin\Debug\net9.0\Serilog.Sinks.Debug.dll
 C:\Users\Doina\Compulsory-1-DLS\CleanerService\bin\Debug\net9.0\Serilog.Sinks.File.dll
 C:\Users\Doina\Compulsory-1-DLS\CleanerService\bin\Debug\net9.0\Serilog.Sinks.Seq.dll
+C:\Users\Doina\Compulsory-1-DLS\CleanerService\bin\Debug\net9.0\Prometheus.NetStandard.dll
+C:\Users\Doina\Compulsory-1-DLS\CleanerService\bin\Debug\net9.0\Prometheus.AspNetCore.dll

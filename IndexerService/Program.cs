@@ -26,6 +26,14 @@ Env.Load(envPath);
 
 Log.Information(" .env loaded successfully!");
 
+// Load shard connections from appsettings.json
+var shardConnections = builder.Configuration.GetSection("ShardConnections").Get<List<string>>() ?? new List<string>();
+
+if (shardConnections.Count < 2)
+{
+    throw new Exception("ShardConnections section must contain at least two connection strings.");
+}
+
 //  Build PostgreSQL connection string
 var mainDbConnectionString = $"Host={Env.GetString("DB_HOST")};" +
                              $"Database={Env.GetString("DB_DATABASE")};" +
@@ -34,19 +42,6 @@ var mainDbConnectionString = $"Host={Env.GetString("DB_HOST")};" +
                              $"Port={Env.GetString("DB_PORT")};" +
                              $"SSL Mode=Require;";
 
-string shard1DbConnectionString = $"Host={Env.GetString("DB_SHARD1_HOST")};" +
-                                  $"Database={Env.GetString("DB_SHARD1_NAME")};" +
-                                  $"Username={Env.GetString("DB_SHARD1_USER")};" +
-                                  $"Password={Env.GetString("DB_SHARD1_PASSWORD")};" +
-                                  $"Port={Env.GetString("DB_SHARD1_PORT")};" +
-                                  $"SSL Mode=Require;";
-
-string shard2DbConnectionString = $"Host={Env.GetString("DB_SHARD2_HOST")};" +
-                                  $"Database={Env.GetString("DB_SHARD2_NAME")};" +
-                                  $"Username={Env.GetString("DB_SHARD2_USER")};" +
-                                  $"Password={Env.GetString("DB_SHARD2_PASSWORD")};" +
-                                  $"Port={Env.GetString("DB_SHARD2_PORT")};" +
-                                  $"SSL Mode=Require;";
 
 Log.Information(" Using PostgreSQL at {Host}:{Port}, Database: {Database}", 
                 Env.GetString("DB_HOST"), 
@@ -57,12 +52,8 @@ Log.Information(" Using PostgreSQL at {Host}:{Port}, Database: {Database}",
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(mainDbConnectionString));
 
-builder.Services.AddSingleton(provider => 
-    new ShardedDbContext(new List<string>
-{
-    shard1DbConnectionString,
-    shard2DbConnectionString
-}));
+builder.Services.AddSingleton(shardConnections);
+builder.Services.AddSingleton<ShardedDbContext>();
 
 Log.Information(" Database connections configured successfully!");
 
@@ -100,8 +91,7 @@ Log.Information(" OpenTelemetry configured!");
 //  Setup RabbitMQ
 builder.Services.AddSingleton<RabbitMQConfig>();
 builder.Services.AddScoped<MailIndexer>(); 
-builder.Services.AddHostedService<WorkerService>();
-builder.Services.AddSingleton<ShardedDbContext>();
+builder.Services.AddHostedService<WorkerService>(); 
 
 Log.Information(" RabbitMQ services registered!");
 
