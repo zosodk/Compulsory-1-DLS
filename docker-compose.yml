@@ -61,7 +61,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     volumes:
-        - ./definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./definitions.json:/etc/rabbitmq/definitions.json
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
