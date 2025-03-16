@@ -51,7 +51,6 @@ public class SearchAPIController : ControllerBase
                 var results = await _databaseResiliencePolicy.ExecuteAsync(async () =>
                 {
                     return await _dbContext.Files
-                        .Where(f => Encoding.UTF8.GetString(f.Content).Contains(query))
                         .Select(f => new
                         {
                             f.FileId,
@@ -59,22 +58,27 @@ public class SearchAPIController : ControllerBase
                             Content = Encoding.UTF8.GetString(f.Content)
                         })
                         .ToListAsync();
-                });
 
+                }).ConfigureAwait(false);
+                
+                
                 if (!results.Any())
                 {
                     _logger.LogInformation("No results found for query: {Query}", query);
                     return NotFound(new { message = "No matching emails found." });
                 }
+                var filteredResults = results.Where(f => f.Content.Contains(query)).ToList();
+
+
 
                 _logger.LogInformation("Found {ResultCount} matching results for query: {Query}", results.Count, query);
-                return Ok(results);
+                return Ok(filteredResults);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while searching for query: {Query}", query);
                 TotalSearchErrors.Inc();
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
+                return StatusCode(500, new { message = "An error occurred while processing your request." + ex.Message  });
             }
         }
     }

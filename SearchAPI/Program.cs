@@ -44,10 +44,10 @@ builder.Services.AddDbContext<DbContextConfig>(options =>
 using (var scope = builder.Services.BuildServiceProvider().CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DbContextConfig>();
-    db.Database.Migrate();
+    db.Database.Migrate();  
+    db.InsertInitialData(); 
 }
 
-Log.Information(" Database connection configured successfully!");
 
 //  Configure OpenTelemetry
 builder.Services.AddOpenTelemetry()
