@@ -7,6 +7,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using Prometheus;
+using SearchAPI.Controller;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +26,7 @@ string envPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory(
 Env.Load(envPath);
 Log.Information(" .env loaded successfully!");
 
-//  Build PostgreSQL connection string
+
 // Build PostgreSQL connection string
 var connectionString = $"Host={Env.GetString("DB_HOST")};Database={Env.GetString("DB_DATABASE")};Username={Env.GetString("DB_USER")};Password={Env.GetString("DB_PASSWORD")};Port={Env.GetString("DB_PORT")}";
 
@@ -33,6 +34,9 @@ Log.Information("Using PostgreSQL at {Host}:{Port}, Database: {Database}",
                 Env.GetString("DB_HOST"),
                 Env.GetString("DB_PORT"),
                 Env.GetString("DB_DATABASE"));
+
+builder.Services.AddSingleton(ResiliencePolicies.GetDatabaseResiliencePolicy());
+
 //  Register database connection
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(connectionString));
@@ -97,6 +101,7 @@ Log.Information("CORS policy applied!");
 
 // Configure SPA frontend path
 var frontEndRelativePath = "./../web-ui/www/";
+
 builder.Services.AddSpaStaticFiles(configuration => 
 {
     configuration.RootPath = frontEndRelativePath;
@@ -106,8 +111,8 @@ Log.Information(" SPA Static Files set to {Path}", frontEndRelativePath);
 // Configure Serilog for application
 builder.Host.UseSerilog();
 
-// Configure the application to listen on http://localhost:5000
-builder.WebHost.UseUrls("http://localhost:5000");
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
+
 
 var app = builder.Build();
 

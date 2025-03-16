@@ -8,12 +8,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { SlicePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { environment } from '../../environments/environment';
+
+
 
 @Component({
   selector: 'app-search',
   standalone: true,
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.scss'],
+  styleUrls: ['./search.component.css'],
   imports: [
     CommonModule,
     FormsModule,
@@ -35,9 +38,11 @@ export class SearchComponent {
 
   searchEmails() {
     if (!this.query) return;
-
-    this.http.get<any>(`http://localhost:5000/api/search/query?query=${this.query}`).subscribe({
+    console.log("Call from inside the component + " +`${environment.apiUrl}/search?query=${this.query}` )
+    this.http.get<any>(`${environment.apiUrl}/search?query=${this.query}`)
+      .subscribe({
       next: (response) => {
+        console.log('Response:', response.results);
         this.emails = response.results;
       },
       error: (error) => {

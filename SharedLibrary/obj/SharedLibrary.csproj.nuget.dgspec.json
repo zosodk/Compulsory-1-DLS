@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj": {}
+    "C:\\Users\\Doina\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj": {}
   },
   "projects": {
-    "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj": {
+    "C:\\Users\\Doina\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj",
+        "projectUniqueName": "C:\\Users\\Doina\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj",
         "projectName": "SharedLibrary",
-        "projectPath": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj",
-        "packagesPath": "C:\\Users\\zosod\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\zosod\\Repos\\Compulsory-1-DLS\\SharedLibrary\\obj\\",
+        "projectPath": "C:\\Users\\Doina\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj",
+        "packagesPath": "C:\\Users\\Doina\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Doina\\Compulsory-1-DLS\\SharedLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\zosod\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Doina\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net9.0": {
@@ -58,6 +58,14 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[9.0.4, )"
+            },
+            "Polly": {
+              "target": "Package",
+              "version": "[8.5.2, )"
+            },
+            "Polly.Extensions.Http": {
+              "target": "Package",
+              "version": "[3.0.0, )"
             },
             "RabbitMQ.Client": {
               "target": "Package",
@@ -80,7 +88,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
