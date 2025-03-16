@@ -104,7 +104,7 @@ namespace CleanerService.Services
                 using var connection = factory.CreateConnection();
                 using var channel = connection.CreateModel();
 
-                channel.QueueDeclare(queue: "cleaned_emails", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                channel.QueueDeclare(queue: "cleaned_emails", durable: true, exclusive: false, autoDelete: false, arguments: null);
 
                 string message = $"{fileName}|{filePath}";
                 var body = Encoding.UTF8.GetBytes(message);
