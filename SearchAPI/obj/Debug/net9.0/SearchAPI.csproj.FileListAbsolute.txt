@@ -156,3 +156,8 @@ C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Serilog.Sinks.Console
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Serilog.Sinks.Debug.dll
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Serilog.Sinks.File.dll
 C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Serilog.Sinks.Seq.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Polly.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Polly.Core.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Polly.Extensions.Http.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Prometheus.NetStandard.dll
+C:\Users\Doina\Compulsory-1-DLS\SearchAPI\bin\Debug\net9.0\Prometheus.AspNetCore.dll

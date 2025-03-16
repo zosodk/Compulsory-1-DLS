@@ -17,7 +17,6 @@ public class DbContextConfig : DbContext
         
     }
     
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Occurrence>()
@@ -32,5 +31,35 @@ public class DbContextConfig : DbContext
             .HasOne(o => o.File)
             .WithMany(f => f.Occurrences)
             .HasForeignKey(o => o.FileId);
+    }
+    public void InsertInitialData()
+    {
+        if (!Files.Any())
+        {
+            Files.AddRange(
+                new FileEntity { FileId = 1, FileName = "file1.txt", Content = Convert.FromBase64String("SGVsbG8gd29ybGQ=") },
+                new FileEntity { FileId = 2, FileName = "file2.txt", Content = Convert.FromBase64String("VGVzdCBmaWxlIGNvbnRlbnQ=") }
+            );
+        }
+
+        if (!Words.Any())
+        {
+            Words.AddRange(
+                new Word { WordId = 1, WordText = "Hello" },
+                new Word { WordId = 2, WordText = "World" },
+                new Word { WordId = 3, WordText = "Test" }
+            );
+        }
+
+        if (!Occurrences.Any())
+        {
+            Occurrences.AddRange(
+                new Occurrence { WordId = 1, FileId = 1, Count = 3 },
+                new Occurrence { WordId = 2, FileId = 1, Count = 2 },
+                new Occurrence { WordId = 3, FileId = 2, Count = 5 }
+            );
+        }
+
+        SaveChanges();
     }
 }

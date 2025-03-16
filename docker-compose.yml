@@ -36,7 +36,7 @@ services:
       interval: 10s
       retries: 5
     restart: unless-stopped
-  
+
   postgres_shard_2:
     image: postgres:17
     environment:
@@ -54,7 +54,7 @@ services:
       interval: 10s
       retries: 5
     restart: unless-stopped
-  
+
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -70,6 +70,7 @@ services:
       retries: 5
     networks:
           - compulsory-network
+
   
   cleaner_service:
     build:
@@ -99,7 +100,7 @@ services:
     volumes:
       - ./maildir:/app/maildir # Map the maildir folder
       - ./cleaned_mails:/app/cleaned_mails # Map the cleaned_mails folder
-  
+
 
   indexer_service:
     build:
@@ -128,13 +129,25 @@ services:
       - "8088:8080"
     networks: 
       - compulsory-network
+  
+  web-ui:
+    build:
+      context: .
+      dockerfile: web-ui/Dockerfile
+    restart: unless-stopped
+    networks:
+      - compulsory-network
+    depends_on:
+      - search_api
+    ports:
+      - "3001:80"
 
   search_api:
     build:
       context: .
       dockerfile: SearchAPI/Dockerfile
-    #deploy:
-      #replicas: 3
+    deploy:
+      replicas: 1
     depends_on:
       postgres:
         condition: service_healthy
@@ -151,12 +164,10 @@ services:
       RABBITMQ_PASSWORD: guest
     restart: unless-stopped
     ports:
-      - "8095:8080"
-    #  - "8096:8081"
-    #  - "8097:8082"
+      - "8082:8080"
     networks: 
       - compulsory-network
-
+  
   seq:
     image: datalust/seq:latest
     container_name: seq
@@ -167,7 +178,7 @@ services:
     restart: unless-stopped
     networks: 
       - compulsory-network
-    
+
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
@@ -176,7 +187,7 @@ services:
     restart: unless-stopped
     networks: 
       - compulsory-network
-    
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -202,20 +213,8 @@ services:
       - prometheus
     networks: 
       - compulsory-network
+  
 
-  
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    depends_on:
-      search_api:
-        condition: service_started
-    networks: 
-      - compulsory-network
-  
 volumes:
   postgres_data:
     driver: local

@@ -3,6 +3,7 @@ using RabbitMQ.Client.Events;
 using SharedLibrary;
 using SharedLibrary.Models;
 using System.Text;
+using Polly;
 using Prometheus;
 
 namespace IndexerService.Services
@@ -12,7 +13,9 @@ namespace IndexerService.Services
         private readonly string _rabbitMqHost;
         private readonly DbContextConfig _dbContext;
         private readonly ILogger<MailIndexer> _logger;
-        
+        private readonly IAsyncPolicy _rabbitMqResiliencePolicy;
+        private readonly IAsyncPolicy _databaseResiliencePolicy;
+
         private static readonly Counter MessagesReceived = Metrics.CreateCounter(
             "indexer_rabbitmq_messages_received_total", "Total messages received from RabbitMQ");
 
@@ -26,100 +29,112 @@ namespace IndexerService.Services
             "indexer_message_processing_seconds", "Histogram of message processing times");
 
 
-        public MailIndexer(IConfiguration configuration, DbContextConfig dbContext, ILogger<MailIndexer> logger)
+        public MailIndexer(IConfiguration configuration, DbContextConfig dbContext,
+            ILogger<MailIndexer> logger,
+            IAsyncPolicy rabbitMqResiliencePolicy,
+            IAsyncPolicy databaseResiliencePolicy)
         {
-            _rabbitMqHost = configuration.GetValue<string>("RABBITMQ_HOST", "rabbitmq"); 
+            _rabbitMqHost = configuration.GetValue<string>("RABBITMQ_HOST", "rabbitmq");
             _dbContext = dbContext;
             _logger = logger;
+            _rabbitMqResiliencePolicy = rabbitMqResiliencePolicy;
+            _databaseResiliencePolicy = databaseResiliencePolicy;
 
             _logger.LogInformation(" RabbitMQ host set to {RabbitMqHost}", _rabbitMqHost);
             _logger.LogInformation("MailIndexer initialized with PostgreSQL");
         }
 
-      public void StartListening()
+         public void StartListening()
         {
-            try
+            _rabbitMqResiliencePolicy.ExecuteAsync(async () =>
             {
-                var factory = new ConnectionFactory() { HostName = _rabbitMqHost };
-                using var connection = factory.CreateConnection();
-                using var channel = connection.CreateModel();
-
-                channel.QueueDeclare(queue: "cleaned_emails", durable: true, exclusive: false, autoDelete: false, arguments: null);
-                var consumer = new EventingBasicConsumer(channel);
-
-                consumer.Received += (model, ea) =>
+                try
                 {
-                    using (var timer = MessageProcessingTime.NewTimer()) 
+                    var factory = new ConnectionFactory() { HostName = _rabbitMqHost };
+                    using var connection = factory.CreateConnection();
+                    using var channel = connection.CreateModel();
+
+                    channel.QueueDeclare(queue: "cleaned_emails", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                    var consumer = new EventingBasicConsumer(channel);
+
+                    consumer.Received += (model, ea) =>
                     {
-                        try
+                        using (var timer = MessageProcessingTime.NewTimer()) 
                         {
-                            MessagesReceived.Inc();
-                            var body = ea.Body.ToArray();
-                            var message = Encoding.UTF8.GetString(body);
-                            _logger.LogInformation("Received message: {Message}", message);
-
-                            var parts = message.Split('|');
-                            if (parts.Length == 2)
+                            try
                             {
-                                string fileName = parts[0];
-                                string filePath = parts[1];
+                                MessagesReceived.Inc();
+                                var body = ea.Body.ToArray();
+                                var message = Encoding.UTF8.GetString(body);
+                                _logger.LogInformation("Received message: {Message}", message);
 
-                                if (!File.Exists(filePath))
+                                var parts = message.Split('|');
+                                if (parts.Length == 2)
                                 {
-                                    _logger.LogWarning("skipping non-existent file: {FilePath}", filePath);
-                                    MessagesFailed.Inc();
-                                    return;
-                                }
+                                    string fileName = parts[0];
+                                    string filePath = parts[1];
 
-                                string content = File.ReadAllText(filePath);
-                                SaveToDatabase(fileName, filePath, content);
+                                    if (!File.Exists(filePath))
+                                    {
+                                        _logger.LogWarning("Skipping non-existent file: {FilePath}", filePath);
+                                        MessagesFailed.Inc();
+                                        return;
+                                    }
+
+                                    string content = File.ReadAllText(filePath);
+                                    SaveToDatabase(fileName, filePath, content);
+                                }
+                                else
+                                {
+                                    _logger.LogWarning("Received malformed message: {Message}", message);
+                                    MessagesFailed.Inc();
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                _logger.LogWarning("Received malformed message: {Message}", message);
+                                _logger.LogError(ex, "Error processing RabbitMQ message");
                                 MessagesFailed.Inc();
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Error processing RabbitMQ message");
-                            MessagesFailed.Inc();
-                        }
-                    }
-                };
+                    };
 
-                channel.BasicConsume(queue: "cleaned_emails", autoAck: true, consumer: consumer);
-                _logger.LogInformation(" Listening for messages on queue: cleaned_emails");
+                    channel.BasicConsume(queue: "cleaned_emails", autoAck: true, consumer: consumer);
+                    _logger.LogInformation("Listening for messages on queue: cleaned_emails");
 
-                while (true) { Thread.Sleep(1000); }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, " Error while connecting to RabbitMQ");
-            }
+                    while (true) { await Task.Delay(1000); }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error while connecting to RabbitMQ");
+                }
+            }).Wait();
         }
 
 
         private void SaveToDatabase(string fileName, string filePath, string content)
         {
-            try
+            _databaseResiliencePolicy.ExecuteAsync(async () =>
             {
-                var fileEntity = new FileEntity
+                try
                 {
-                    FileName = fileName,
-                    Content = Encoding.UTF8.GetBytes(content)
-                };
+                    var fileEntity = new FileEntity
+                    {
+                        FileName = fileName,
+                        Content = Encoding.UTF8.GetBytes(content)
+                    };
 
-                _dbContext.Files.Add(fileEntity);
-                _dbContext.SaveChanges();
-                 FilesSavedToDB.Inc();
-                _logger.LogInformation(" Saved file to PostgreSQL: {FileName}", fileName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to save file {FileName} to database", fileName);
-                MessagesFailed.Inc();
-            }
+                    _dbContext.Files.Add(fileEntity);
+                    _dbContext.SaveChanges();
+                    FilesSavedToDB.Inc();
+                    _logger.LogInformation(" Saved file to PostgreSQL: {FileName}", fileName);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to save file {FileName} to database", fileName);
+                    MessagesFailed.Inc();
+                }
+            }).Wait();
         }
     }
 }
+

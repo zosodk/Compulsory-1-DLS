@@ -38,7 +38,12 @@ Log.Information("Using PostgreSQL at {Host}:{Port}, Database: {Database}",
                 Env.GetString("DB_PORT"),
                 Env.GetString("DB_DATABASE"));
 
-// Register main database and shards
+// Resilience Policies
+builder.Services.AddSingleton(ResiliencePolicies.GetDatabaseResiliencePolicy());
+builder.Services.AddSingleton(ResiliencePolicies.GetRabbitMqResiliencePolicy());
+
+
+//  main database and shards
 builder.Services.AddDbContext<DbContextConfig>(options =>
     options.UseNpgsql(mainDbConnectionString));
 

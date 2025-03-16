@@ -12,7 +12,9 @@ RUN npm run build -- --configuration=production && ls -lah www
 
 FROM nginx:alpine
 
-COPY --from=build /app/www /usr/share/nginx/html
+COPY --from=build /app/dist/web-ui/ /usr/share/nginx/html
+COPY web-ui/nginx.conf /etc/nginx/conf.d/default.conf
+
 
 EXPOSE 80
 
