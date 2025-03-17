@@ -5,6 +5,7 @@ using SharedLibrary.Models;
 using System.Text;
 using Polly;
 using Prometheus;
+using System.Text.RegularExpressions;
 
 namespace IndexerService.Services
 {
@@ -44,7 +45,7 @@ namespace IndexerService.Services
             _logger.LogInformation("MailIndexer initialized with PostgreSQL");
         }
 
-         public void StartListening()
+        public void StartListening()
         {
             _rabbitMqResiliencePolicy.ExecuteAsync(async () =>
             {
@@ -54,12 +55,12 @@ namespace IndexerService.Services
                     using var connection = factory.CreateConnection();
                     using var channel = connection.CreateModel();
 
-                    channel.QueueDeclare(queue: "cleaned_emails", durable: false, exclusive: false, autoDelete: false, arguments: null);
+                    channel.QueueDeclare(queue: "cleaned_emails", durable: true, exclusive: false, autoDelete: false, arguments: null);
                     var consumer = new EventingBasicConsumer(channel);
 
                     consumer.Received += (model, ea) =>
                     {
-                        using (var timer = MessageProcessingTime.NewTimer()) 
+                        using (var timer = MessageProcessingTime.NewTimer())
                         {
                             try
                             {
@@ -110,7 +111,6 @@ namespace IndexerService.Services
             }).Wait();
         }
 
-
         private void SaveToDatabase(string fileName, string filePath, string content)
         {
             _databaseResiliencePolicy.ExecuteAsync(async () =>
@@ -125,8 +125,35 @@ namespace IndexerService.Services
 
                     _dbContext.Files.Add(fileEntity);
                     _dbContext.SaveChanges();
+
+                    var wordCounts = CountWords(content);
+
+                    foreach (var wordCount in wordCounts)
+                    {
+                        var wordText = wordCount.Key;
+                        var count = wordCount.Value;
+
+                        var word = _dbContext.Words.FirstOrDefault(w => w.WordText == wordText);
+                        if (word == null)
+                        {
+                            word = new Word { WordText = wordText };
+                            _dbContext.Words.Add(word);
+                            _dbContext.SaveChanges();
+                        }
+
+                        var occurrence = new Occurrence
+                        {
+                            WordId = word.WordId,
+                            FileId = fileEntity.FileId,
+                            Count = count
+                        };
+
+                        _dbContext.Occurrences.Add(occurrence);
+                    }
+
+                    _dbContext.SaveChanges();
                     FilesSavedToDB.Inc();
-                    _logger.LogInformation(" Saved file to PostgreSQL: {FileName}", fileName);
+                    _logger.LogInformation("Saved file and word occurrences to PostgreSQL: {FileName}", fileName);
                 }
                 catch (Exception ex)
                 {
@@ -135,6 +162,26 @@ namespace IndexerService.Services
                 }
             }).Wait();
         }
+
+        private Dictionary<string, int> CountWords(string content)
+        {
+            var wordCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            var words = Regex.Matches(content, @"\b\w+\b");
+
+            foreach (Match match in words)
+            {
+                var word = match.Value;
+                if (wordCounts.ContainsKey(word))
+                {
+                    wordCounts[word]++;
+                }
+                else
+                {
+                    wordCounts[word] = 1;
+                }
+            }
+
+            return wordCounts;
+        }
     }
 }
-
