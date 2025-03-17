@@ -34,6 +34,7 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=1 \
     SERILOG__WRITETO__SEQ__SERVERURL=http://seq:5341
 
 ENTRYPOINT ["dotnet", "SearchAPI.dll"]
+#ENTRYPOINT ["dotnet", "SearchAPI.dll", "--urls", "http://0.0.0.0:8082"]
 
 
 

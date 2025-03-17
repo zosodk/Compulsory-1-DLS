@@ -14,7 +14,7 @@ public class SearchAPIController : ControllerBase
     private readonly DbContextConfig _dbContext;
     private readonly ILogger<SearchAPIController> _logger;
     private readonly IAsyncPolicy _databaseResiliencePolicy;
-    
+
     private static readonly Counter TotalSearchRequests = Metrics.CreateCounter(
         "search_requests_total", "Total search requests received");
 
@@ -25,7 +25,8 @@ public class SearchAPIController : ControllerBase
         "search_response_time_seconds", "Histogram of search response times");
 
 
-    public SearchAPIController(DbContextConfig dbContext, ILogger<SearchAPIController> logger, IAsyncPolicy databaseResiliencePolicy)
+    public SearchAPIController(DbContextConfig dbContext, ILogger<SearchAPIController> logger,
+        IAsyncPolicy databaseResiliencePolicy)
     {
         _dbContext = dbContext;
         _logger = logger;
@@ -58,27 +59,28 @@ public class SearchAPIController : ControllerBase
                             Content = Encoding.UTF8.GetString(f.Content)
                         })
                         .ToListAsync();
-
                 }).ConfigureAwait(false);
-                
-                
+
+
                 if (!results.Any())
                 {
                     _logger.LogInformation("No results found for query: {Query}", query);
                     return NotFound(new { message = "No matching emails found." });
                 }
-                var filteredResults = results.Where(f => f.Content.Contains(query)).ToList();
 
+                var lowerQuery = query.ToLower();
+                var filteredResults = results.Where(f => f.Content.ToLower().Contains(lowerQuery)).ToList();
 
-
-                _logger.LogInformation("Found {ResultCount} matching results for query: {Query}", results.Count, query);
+                _logger.LogInformation("Found {ResultCount} matching results for query: {Query}", filteredResults.Count,
+                    query);
                 return Ok(filteredResults);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while searching for query: {Query}", query);
                 TotalSearchErrors.Inc();
-                return StatusCode(500, new { message = "An error occurred while processing your request." + ex.Message  });
+                return StatusCode(500,
+                    new { message = "An error occurred while processing your request. " + ex.Message });
             }
         }
     }
