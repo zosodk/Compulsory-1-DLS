@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "wwZkgTtDASo=",
+  "dgSpecHash": "dW2CjVPxLdM=",
   "success": true,
   "projectFilePath": "C:\\Users\\Doina\\Compulsory-1-DLS\\SharedLibrary\\SharedLibrary.csproj",
   "expectedPackageFiles": [
@@ -25,9 +25,6 @@
     "C:\\Users\\Doina\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\Doina\\.nuget\\packages\\npgsql\\9.0.3\\npgsql.9.0.3.nupkg.sha512",
     "C:\\Users\\Doina\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.4\\npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
-    "C:\\Users\\Doina\\.nuget\\packages\\polly\\8.5.2\\polly.8.5.2.nupkg.sha512",
-    "C:\\Users\\Doina\\.nuget\\packages\\polly.core\\8.5.2\\polly.core.8.5.2.nupkg.sha512",
-    "C:\\Users\\Doina\\.nuget\\packages\\polly.extensions.http\\3.0.0\\polly.extensions.http.3.0.0.nupkg.sha512",
     "C:\\Users\\Doina\\.nuget\\packages\\rabbitmq.client\\6.4.0\\rabbitmq.client.6.4.0.nupkg.sha512",
     "C:\\Users\\Doina\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "C:\\Users\\Doina\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
