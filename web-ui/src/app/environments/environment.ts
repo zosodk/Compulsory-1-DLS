@@ -1,5 +1,7 @@
 export const environment = {
   production: false,
-  BASE_URL:'http:localhost:8080' ,
-  apiUrl: '/api'
+  BASE_URL: 'http://localhost:8080',
+  // apiUrl: 'http://localhost:3001/api'
+  apiUrl: 'http://localhost:3001/api'
+
 };
