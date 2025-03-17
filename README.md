@@ -12,7 +12,7 @@ c4-post model is located in ./c4-post folder.
 
 Both can be executed by running docker-compose up --build from the respective folders.
 
-WEB-UI: localhost:80
+WEB-UI: localhost:3001
 
 RabbitMQ: http://localhost:15672
 
@@ -26,3 +26,5 @@ Grafana:  http://localhost:3000
 
 All monitoring and logging services are integrated with the application and default usernames 
 and passwords have been used (guest/guest, admin/admin etc.)
+
+
