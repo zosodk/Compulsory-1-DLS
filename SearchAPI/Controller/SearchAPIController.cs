@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Polly;
@@ -86,4 +87,24 @@ public async Task<IActionResult> SearchWord([FromQuery] string query)
         }
     }
 }
+
+[HttpGet("files/download/{fileId}")]
+public async Task<IActionResult> DownloadFile(int fileId)
+{
+    var file = await _dbContext.Files.FindAsync(fileId);
+
+    if (file == null)
+    {
+        return NotFound(new { message = "File not found." });
+    }
+    
+    var content = Encoding.UTF8.GetString(file.Content);
+    var byteArray = Encoding.UTF8.GetBytes(content);
+    var fileStream = new MemoryStream(byteArray);
+    
+    return File(fileStream, "text/plain", $"{file.FileName}");
+}
+
+
+
 }
