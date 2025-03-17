@@ -6,6 +6,7 @@ using System.Text;
 using Polly;
 using Prometheus;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace IndexerService.Services
 {
@@ -55,7 +56,8 @@ namespace IndexerService.Services
                     using var connection = factory.CreateConnection();
                     using var channel = connection.CreateModel();
 
-                    channel.QueueDeclare(queue: "cleaned_emails", durable: true, exclusive: false, autoDelete: false, arguments: null);
+                    channel.QueueDeclare(queue: "cleaned_emails", durable: true, exclusive: false, autoDelete: false,
+                        arguments: null);
                     var consumer = new EventingBasicConsumer(channel);
 
                     consumer.Received += (model, ea) =>
@@ -102,7 +104,10 @@ namespace IndexerService.Services
                     channel.BasicConsume(queue: "cleaned_emails", autoAck: true, consumer: consumer);
                     _logger.LogInformation("Listening for messages on queue: cleaned_emails");
 
-                    while (true) { await Task.Delay(1000); }
+                    while (true)
+                    {
+                        await Task.Delay(1000);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -111,9 +116,9 @@ namespace IndexerService.Services
             }).Wait();
         }
 
-        private void SaveToDatabase(string fileName, string filePath, string content)
+        private async Task SaveToDatabase(string fileName, string filePath, string content)
         {
-            _databaseResiliencePolicy.ExecuteAsync(async () =>
+            await _databaseResiliencePolicy.ExecuteAsync(async () =>
             {
                 try
                 {
@@ -124,34 +129,46 @@ namespace IndexerService.Services
                     };
 
                     _dbContext.Files.Add(fileEntity);
-                    _dbContext.SaveChanges();
-
+                    await _dbContext.SaveChangesAsync(); 
+                    
                     var wordCounts = CountWords(content);
+                    var wordTexts = wordCounts.Keys.ToList();
+                    
+                    var existingWords = await _dbContext.Words
+                        .Where(w => wordTexts.Contains(w.WordText))
+                        .ToDictionaryAsync(w => w.WordText, w => w);
 
-                    foreach (var wordCount in wordCounts)
+                    var newWords = new List<Word>();
+                    var occurrences = new List<Occurrence>();
+
+                    foreach (var (wordText, count) in wordCounts)
                     {
-                        var wordText = wordCount.Key;
-                        var count = wordCount.Value;
-
-                        var word = _dbContext.Words.FirstOrDefault(w => w.WordText == wordText);
-                        if (word == null)
+                        if (!existingWords.TryGetValue(wordText, out var word))
                         {
                             word = new Word { WordText = wordText };
-                            _dbContext.Words.Add(word);
-                            _dbContext.SaveChanges();
+                            newWords.Add(word);
+                            existingWords[wordText] = word;
                         }
 
-                        var occurrence = new Occurrence
+                        occurrences.Add(new Occurrence
                         {
-                            WordId = word.WordId,
+                            Word = word,
                             FileId = fileEntity.FileId,
                             Count = count
-                        };
-
-                        _dbContext.Occurrences.Add(occurrence);
+                        });
+                    }
+                    
+                    if (newWords.Any())
+                    {
+                        await _dbContext.Words.AddRangeAsync(newWords);
+                        await _dbContext.SaveChangesAsync(); 
                     }
 
-                    _dbContext.SaveChanges();
+                    if (occurrences.Any())
+                    {
+                        await _dbContext.Occurrences.AddRangeAsync(occurrences);
+                        await _dbContext.SaveChangesAsync();
+                    }
                     FilesSavedToDB.Inc();
                     _logger.LogInformation("Saved file and word occurrences to PostgreSQL: {FileName}", fileName);
                 }
@@ -160,25 +177,20 @@ namespace IndexerService.Services
                     _logger.LogError(ex, "Failed to save file {FileName} to database", fileName);
                     MessagesFailed.Inc();
                 }
-            }).Wait();
+            });
         }
+
 
         private Dictionary<string, int> CountWords(string content)
         {
-            var wordCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            var words = Regex.Matches(content, @"\b\w+\b");
+            var wordCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase); 
+            var words = Regex.Matches(content,
+                @"\b[a-zA-Z']+\b"); 
 
             foreach (Match match in words)
             {
-                var word = match.Value;
-                if (wordCounts.ContainsKey(word))
-                {
-                    wordCounts[word]++;
-                }
-                else
-                {
-                    wordCounts[word] = 1;
-                }
+                string word = match.Value.ToLower(); 
+                wordCounts[word] = wordCounts.TryGetValue(word, out int count) ? count + 1 : 1;
             }
 
             return wordCounts;
