@@ -82,7 +82,9 @@ export class SearchComponent {
         const a = document.createElement('a');
         const objectUrl = URL.createObjectURL(blob);
         a.href = objectUrl;
-        a.download = fileName;
+
+        a.download = fileName.endsWith('.txt') ? fileName : `${fileName}.txt`;
+
         a.click();
         URL.revokeObjectURL(objectUrl);
       },
@@ -92,4 +94,27 @@ export class SearchComponent {
       }
     });
   }
+
+
+
+  // downloadFile(fileId: number, fileName: string) {
+  //   console.log(`Downloading file: ${fileName}`);
+  //
+  //   this.http.get(`${environment.apiUrl}/files/download/${fileId}`, {
+  //     responseType: 'blob'
+  //   }).subscribe({
+  //     next: (blob) => {
+  //       const a = document.createElement('a');
+  //       const objectUrl = URL.createObjectURL(blob);
+  //       a.href = objectUrl;
+  //       a.download = fileName;
+  //       a.click();
+  //       URL.revokeObjectURL(objectUrl);
+  //     },
+  //     error: (error) => {
+  //       console.error('Error downloading file:', error);
+  //       this.errorMessage = 'Error downloading file. Please try again.';
+  //     }
+  //   });
+  // }
 }

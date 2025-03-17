@@ -38,8 +38,7 @@ namespace SharedLibrary
         {
             return Policy.WrapAsync(CircuitBreakerPolicy, RetryPolicy);
         }
-
-        //  Database Resilience Policies
+        
         private static readonly AsyncRetryPolicy DatabaseRetryPolicy =
             Policy
                 .Handle<DbUpdateException>()
