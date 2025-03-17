@@ -45,7 +45,7 @@ using (var scope = builder.Services.BuildServiceProvider().CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DbContextConfig>();
     db.Database.Migrate();  
-    db.InsertInitialData(); 
+   // db.InsertInitialData(); 
 }
 
 
@@ -93,10 +93,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowOrigin",
         builder => builder
-            .WithOrigins("https://trustedwebsite.com", "https://anothertrustedwebsite.com")
+            .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
 Log.Information("CORS policy applied!");
 
 // Configure SPA frontend path

@@ -32,6 +32,7 @@ public class DbContextConfig : DbContext
             .WithMany(f => f.Occurrences)
             .HasForeignKey(o => o.FileId);
     }
+
     public void InsertInitialData()
     {
         /* if (!Files.Any())
@@ -62,4 +63,5 @@ public class DbContextConfig : DbContext
 
          SaveChanges();*/
     }
+
 }

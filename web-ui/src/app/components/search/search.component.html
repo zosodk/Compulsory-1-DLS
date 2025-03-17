@@ -1,7 +1,6 @@
-<div class="container" style="max-width: 600px; margin: auto; padding: 20px; text-align: center;">
-
+<div class="container" style="max-width: 800px; margin: auto; padding: 20px; text-align: center;">
   <h2 style="color: #3f51b5; font-weight: bold; text-align: center; margin-bottom: 16px;">
-    Email Search
+    Word Search
   </h2>
 
   <div style="
@@ -14,42 +13,65 @@
     border-radius: 8px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   ">
-
     <mat-form-field appearance="outline" style="flex: 1; min-width: 250px;">
-      <mat-label>Search for emails</mat-label>
-      <input matInput [(ngModel)]="query" placeholder="Enter email keyword">
+      <mat-label>Search for words</mat-label>
+      <input matInput [(ngModel)]="query" placeholder="Enter a word">
     </mat-form-field>
 
-    <button mat-raised-button color="primary" (click)="searchEmails()"
+    <button mat-raised-button color="primary" (click)="searchWords()"
             style="height: 40px; border-radius: 20px; font-weight: bold; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);">
       <mat-icon style="vertical-align: middle; margin-right: 4px;">search</mat-icon> Search
     </button>
   </div>
 
-  <table mat-table *ngIf="emails.length" [dataSource]="emails" class="mat-elevation-z8"
-         style="margin-top: 20px; background: white; border-radius: 8px; width: 100%;">
+  <p *ngIf="errorMessage" style="color: red; margin-top: 10px;">{{ errorMessage }}</p>
 
-    <ng-container matColumnDef="fileName">
-      <th mat-header-cell *matHeaderCellDef style="color: #3f51b5; text-align: center;"> File Name </th>
-      <td mat-cell *matCellDef="let email"> {{ email.file_name }} </td>
-    </ng-container>
+  <div style="overflow-x: auto; margin-top: 20px;">
+    <table mat-table *ngIf="words.length" [dataSource]="words" class="mat-elevation-z8"
+           style="background: white; border-radius: 8px; width: 100%;">
 
-    <ng-container matColumnDef="content">
-      <th mat-header-cell *matHeaderCellDef style="color: #3f51b5; text-align: center;"> Content </th>
-      <td mat-cell *matCellDef="let email"> {{ email.content | slice:0:100 }}... </td>
-    </ng-container>
+      <!-- Word Column -->
+      <ng-container matColumnDef="word">
+        <th mat-header-cell *matHeaderCellDef style="width: 25%; color: #3f51b5; text-align: center;"> Word </th>
+        <td mat-cell *matCellDef="let word" style="text-align: center;"> {{ word.wordText }} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="download">
-      <th mat-header-cell *matHeaderCellDef style="color: #3f51b5; text-align: center;"> Download </th>
-      <td mat-cell *matCellDef="let email">
-        <button mat-mini-fab color="accent" (click)="downloadEmail(email)">
-          <mat-icon>download</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <!-- Occurrence Count Column -->
+      <ng-container matColumnDef="occurrence">
+        <th mat-header-cell *matHeaderCellDef style="width: 15%; color: #3f51b5; text-align: center;"> Frequency </th>
+        <td mat-cell *matCellDef="let word" style="text-align: center;"> {{ word.occurrenceCount }} </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <!-- Files Column -->
+      <ng-container matColumnDef="files">
+        <th mat-header-cell *matHeaderCellDef style="width: 40%; color: #3f51b5; text-align: center;"> Files </th>
+        <td mat-cell *matCellDef="let word" style="text-align: center;">
+          <div *ngIf="word.files.length > 0">
+            <table style="width: 100%;">
+              <tr *ngFor="let file of word.files.slice(0, word.visibleFiles)">
+                <td style="text-align: left;">{{ file.fileName }}</td>
+                <td style="text-align: right;">
+                  <button mat-icon-button color="primary" (click)="downloadFile(file.fileId, file.fileName)">
+                    <mat-icon style="font-size: 18px;">download</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </table>
+            <button *ngIf="word.visibleFiles < word.files.length" mat-button (click)="showMore(word)"
+                    style="margin-top: 5px; font-size: 12px;">
+              Show More
+            </button>
+            <button *ngIf="word.visibleFiles > 5" mat-button (click)="showLess(word)"
+                    style="margin-top: 5px; font-size: 12px;">
+              Show Less
+            </button>
+          </div>
+        </td>
+      </ng-container>
 
-  </table>
+      <tr mat-header-row *matHeaderRowDef="['word', 'occurrence', 'files']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['word', 'occurrence', 'files'];"></tr>
+
+    </table>
+  </div>
 </div>
